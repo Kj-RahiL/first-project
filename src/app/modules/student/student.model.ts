@@ -57,7 +57,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       },
       required: true,
     },
-    dateOfBirth: { type: String },
+    dateOfBirth: { type: Date },
     email: { type: String, required: true },
     contactNo: { type: String, required: true },
     emergencyContactNo: { type: String, required: true },
@@ -91,24 +91,6 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName} `;
 });
 
-// document middleware
-// pre save middleware/hook
-
-// studentSchema.pre('save', async function (next) {
-//   // hashing password and save into db
-//   const user = this;
-//   user.password = await bcrypt.hash(
-//     user.password,
-//     Number(config.bcrypt_salt_rounds),
-//   );
-//   next();
-// });
-
-// post save middleware/hook
-// studentSchema.post('save', function (doc, next) {
-//   doc.password = '';
-//   next();
-// });
 
 // query middleware
 studentSchema.pre('find', function (next) {
