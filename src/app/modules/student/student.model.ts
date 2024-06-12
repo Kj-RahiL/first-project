@@ -9,11 +9,16 @@ import {
 } from './student.interface';
 
 const userNameSchema = new Schema<TUserName>({
-  firstName: { type: String, required: [true, 'First Name is Required'] },
-  middleName: { type: String },
+  firstName: {
+    type: String,
+    required: [true, 'First Name is Required'],
+    trim: true,
+  },
+  middleName: { type: String, trim: true },
   lastName: {
     type: String,
     required: [true, 'Last Name is Required'],
+    trim: true,
   },
 });
 
@@ -57,7 +62,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       },
       required: true,
     },
-    dateOfBirth: { type: Date },
+    dateOfBirth: { type: String },
     email: { type: String, required: true },
     contactNo: { type: String, required: true },
     emergencyContactNo: { type: String, required: true },
@@ -75,6 +80,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: true,
     },
+    admissionSemester: { type: Schema.Types.ObjectId, ref: 'AcademicSemester' },
     profileImg: { type: String },
 
     isDeleted: { type: Boolean, default: false },
@@ -91,10 +97,9 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName} `;
 });
 
-
 // query middleware
 studentSchema.pre('find', function (next) {
-  this.find({ isDeleted: { $ne: true } }); 
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 
