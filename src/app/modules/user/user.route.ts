@@ -1,7 +1,7 @@
 import express from 'express';
 import { UserControllers } from './user.contoller';
 import validateRequest from '../../middlewares/validateRequest';
-import { createStudentValidationSchema } from '../student/student.zod.validation';
+import { createStudentValidationSchema } from '../student/student.validation';
 
 const router = express.Router();
 
