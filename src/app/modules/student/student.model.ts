@@ -80,7 +80,14 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: true,
     },
-    admissionSemester: { type: Schema.Types.ObjectId, ref: 'AcademicSemester' },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
     profileImg: { type: String },
 
     isDeleted: { type: Boolean, default: false },
@@ -112,6 +119,7 @@ studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
+
 
 // creating custom static method
 

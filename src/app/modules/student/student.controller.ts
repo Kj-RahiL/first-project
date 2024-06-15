@@ -1,8 +1,8 @@
-import {  RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import { studentServices } from './student.service';
-import sendResponse from '../../utiles/sendResponse';
+import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
-import catchAsync from '../../utiles/catchAsync';
+import catchAsync from '../../utils/catchAsync';
 // import studentValidationSchema from '../student.joi.valdation';
 
 const getAllStudents: RequestHandler = catchAsync(async (req, res) => {
