@@ -13,7 +13,10 @@ router.post(
   AcademicDepartmentController.createAcademicDepartment,
 );
 
-router.get('/:departmentId', AcademicDepartmentController.getSingleAcademicDepartment);
+router.get(
+  '/:departmentId',
+  AcademicDepartmentController.getSingleAcademicDepartment,
+);
 
 router.patch(
   '/:departmentId',

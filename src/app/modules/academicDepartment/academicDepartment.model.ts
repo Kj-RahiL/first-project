@@ -18,23 +18,22 @@ academicDepartmentSchema.pre('save', async function (next) {
     name: this.name,
   });
   if (isDepartmentExist) {
-    throw new AppError(httpStatus.NOT_FOUND , 'This Department Already Exists');
+    throw new AppError(httpStatus.NOT_FOUND, 'This Department Already Exists');
   }
   next();
 });
 
-academicDepartmentSchema.pre("findOneAndUpdate", async function (next) {
-    const query = this.getQuery()
+academicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
 
-    const isDepartmentExist = await AcademicDepartment.findOne(query)
+  const isDepartmentExist = await AcademicDepartment.findOne(query);
 
-    if(!isDepartmentExist){
-        throw new AppError(httpStatus.NOT_FOUND, "This Department doesNot exist");
-        
-    }
+  if (!isDepartmentExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This Department doesNot exist');
+  }
 
-    next()
-})
+  next();
+});
 
 export const AcademicDepartment = model<TAcademicDepartment>(
   'AcademicDepartment',

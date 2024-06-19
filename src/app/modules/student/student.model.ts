@@ -120,7 +120,6 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
-
 // creating custom static method
 
 studentSchema.statics.isUserExists = async function (id: string) {

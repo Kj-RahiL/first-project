@@ -6,7 +6,7 @@ import httpStatus from 'http-status';
 
 const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   if (academicSemesterNameCodeMapper[payload.name] !== payload.code) {
-    throw new AppError(httpStatus.NOT_FOUND,'Invalid Semester Code');
+    throw new AppError(httpStatus.NOT_FOUND, 'Invalid Semester Code');
   }
 
   const result = await AcademicSemester.create(payload);

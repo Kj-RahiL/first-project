@@ -10,10 +10,7 @@ router.post(
   validateRequest(AcademicValidations.createAcademicSemesterValidationSchema),
   AcademicSemesterControllers.createAcademicSemester,
 );
-router.get(
-  '/',
-  AcademicSemesterControllers.getAllAcademicSemesters,
-);
+router.get('/', AcademicSemesterControllers.getAllAcademicSemesters);
 router.get(
   '/:semesterId',
   AcademicSemesterControllers.getSingleAcademicSemesters,

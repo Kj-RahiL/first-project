@@ -1,5 +1,5 @@
-import { AcademicDepartment } from "./academicDepartment.model";
-import { TAcademicDepartment } from "./academicDepartment.interface";
+import { AcademicDepartment } from './academicDepartment.model';
+import { TAcademicDepartment } from './academicDepartment.interface';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   const result = await AcademicDepartment.create(payload);
@@ -20,9 +20,13 @@ const updateAcademicDepartmentFromDB = async (
   id: string,
   payload: Partial<TAcademicDepartment>,
 ) => {
-  const result = await AcademicDepartment.findByIdAndUpdate({ _id: id }, payload, {
-    new: true,
-  });
+  const result = await AcademicDepartment.findByIdAndUpdate(
+    { _id: id },
+    payload,
+    {
+      new: true,
+    },
+  );
   return result;
 };
 

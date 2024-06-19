@@ -6,46 +6,40 @@ export type TUserName = {
   middleName: string;
   lastName: string;
 };
-export type TGuardian = {
-  fatherName: string;
-  fatherOccupation: string;
-  fatherContactNo: string;
-  motherName: string;
-  motherOccupation: string;
-  motherContactNo: string;
-};
 
-export type TLocalGuardian = {
-  name: string;
-  occupation: string;
-  contactNo: string;
-  address: string;
-};
+export type TGender = 'male' | 'female' | 'other';
+export type TBloodGroup =
+  | 'A+'
+  | 'A-'
+  | 'B+'
+  | 'B-'
+  | 'AB+'
+  | 'AB-'
+  | 'O+'
+  | 'O-';
 
-export type TStudent = {
+export type TFaculty = {
   id: string;
   user: Types.ObjectId;
-  password: string;
+  role: string;
+  designation: string;
   name: TUserName;
-  gender: 'male' | 'female' | 'other';
+  gender: TGender;
   dateOfBirth?: string;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodGroup?: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
-  guardian: TGuardian;
-  localGuardian: TLocalGuardian;
-  admissionSemester: Types.ObjectId;
   academicDepartment: Types.ObjectId;
   profileImg?: string;
   isDeleted: boolean;
 };
 // for creating static
 
-export interface StudentModel extends Model<TStudent> {
-  isUserExists(id: string): Promise<TStudent | null>;
+export interface FacultyModel extends Model<TFaculty> {
+  isUserExists(id: string): Promise<TFaculty | null>;
 }
 
 // for creating instance

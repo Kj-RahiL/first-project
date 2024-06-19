@@ -8,78 +8,6 @@ import { studentSearchableFields } from './student.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  /* const queryObj = { ...query };
-  let searchTerm = '';
-  if (query?.searchTerm) {
-    searchTerm = query?.searchTerm as string;
-  }
-
-  // HOW OUR FORMAT SHOULD BE FOR PARTIAL MATCH  :
-  //  { email: { $regex : query.searchTerm , $options: i}}
-  //  { presentAddress: { $regex : query.searchTerm , $options: i}}
-  //  { 'name.firstName': { $regex : query.searchTerm , $options: i}}
-
-  // search
-  const searchQuery = Student.find({
-    $or: studentSearchableFields.map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  });
-
-  // fUNCTIONALITY for all of:
-  const excludeFIelds = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
-  excludeFIelds.forEach((el) => delete queryObj[el]);
-
-  // filtering
-  const filterQuery = searchQuery
-    .find(queryObj)
-    .populate('admissionSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
-    });
-
-  // sort
-  let sort = '-createdAt';
-  if (query?.sort) {
-    sort = query.sort as string;
-  }
-  // Execute the query with sorting
-  const sortQuery = filterQuery.sort(sort);
-
-  //pagination functionality
-  let limit = 1;
-  let page = 1;
-  let skip = 0;
-
-  // limit is given
-  if (query?.limit) {
-    limit = Number(query.limit);
-  }
-
-  //if page given and set
-  if (query?.page) {
-    page = Number(query.page);
-    skip = (page - 1) * limit;
-  }
-
-  // Execute the query with limiting and paging
-  const paginateQuery = sortQuery.skip(skip);
-  const limitQuery = paginateQuery.limit(limit);
-
-  // limiting fields
-  let fields = '-__v';
-  if (query?.fields) {
-    fields = (query.fields as string).split(',').join(' ');
-  }
-
-  const fieldQuery = await limitQuery.select(fields);
-
-  return fieldQuery;
-  */
-
   const studentQuery = new QueryBuilder(
     Student.find()
       .populate('admissionSemester')
@@ -102,7 +30,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
-  const result = await Student.findOne({ id })
+  const result = await Student.findById(id)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -138,7 +66,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
     }
   }
 
-  const result = await Student.findOneAndUpdate({ id }, modifiedUpdateData, {
+  const result = await Student.findByIdAndUpdate(id, modifiedUpdateData, {
     new: true,
     runValidators: true,
   });
@@ -147,7 +75,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
 };
 
 const deleteStudentFromDB = async (id: string) => {
-  const isStudentExist = await Student.findOne({ id });
+  const isStudentExist = await Student.findById(id);
 
   if (!isStudentExist) {
     throw new AppError(httpStatus.NOT_FOUND, 'This student does not exist');
@@ -158,8 +86,8 @@ const deleteStudentFromDB = async (id: string) => {
   try {
     session.startTransaction();
 
-    const deletedStudent = await Student.findOneAndUpdate(
-      { id },
+    const deletedStudent = await Student.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       { new: true, session },
     );
@@ -167,9 +95,10 @@ const deleteStudentFromDB = async (id: string) => {
     if (!deletedStudent) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Student');
     }
-
-    const deletedUser = await User.findOneAndUpdate(
-      { id },
+    // get user id from deleted user
+    const userId = deletedStudent.user;
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
       { isDeleted: true },
       { new: true, session },
     );
