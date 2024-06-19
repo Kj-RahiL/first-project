@@ -5,12 +5,11 @@ import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
 import { studentSearchableFields } from './student.constant';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
-  const queryObj = { ...query };
-
+  /* const queryObj = { ...query };
   let searchTerm = '';
-
   if (query?.searchTerm) {
     searchTerm = query?.searchTerm as string;
   }
@@ -30,8 +29,6 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   // fUNCTIONALITY for all of:
   const excludeFIelds = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
   excludeFIelds.forEach((el) => delete queryObj[el]);
-
-  console.log({ query }, { queryObj });
 
   // filtering
   const filterQuery = searchQuery
@@ -72,7 +69,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const paginateQuery = sortQuery.skip(skip);
   const limitQuery = paginateQuery.limit(limit);
 
-  // limiting page
+  // limiting fields
   let fields = '-__v';
   if (query?.fields) {
     fields = (query.fields as string).split(',').join(' ');
@@ -81,6 +78,27 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const fieldQuery = await limitQuery.select(fields);
 
   return fieldQuery;
+  */
+
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(studentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await studentQuery.modelQuery;
+  return result;
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
