@@ -4,9 +4,38 @@ import AppError from '../../errors/appError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
+import { studentSearchableFields } from './student.constant';
 
-const getAllStudentsFromDB = async () => {
-  const result = await Student.find()
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  const queryObj = { ...query };
+
+  let searchTerm = '';
+
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  // HOW OUR FORMAT SHOULD BE FOR PARTIAL MATCH  :
+  //  { email: { $regex : query.searchTerm , $options: i}}
+  //  { presentAddress: { $regex : query.searchTerm , $options: i}}
+  //  { 'name.firstName': { $regex : query.searchTerm , $options: i}}
+
+  // search
+  const searchQuery = Student.find({
+    $or: studentSearchableFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  // fUNCTIONALITY for all of:
+  const excludeFIelds = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+  excludeFIelds.forEach((el) => delete queryObj[el]);
+
+  console.log({ query }, { queryObj });
+
+  // filtering
+  const filterQuery = searchQuery
+    .find(queryObj)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -14,7 +43,44 @@ const getAllStudentsFromDB = async () => {
         path: 'academicFaculty',
       },
     });
-  return result;
+
+  // sort
+  let sort = '-createdAt';
+  if (query?.sort) {
+    sort = query.sort as string;
+  }
+  // Execute the query with sorting
+  const sortQuery = filterQuery.sort(sort);
+
+  //pagination functionality
+  let limit = 1;
+  let page = 1;
+  let skip = 0;
+
+  // limit is given
+  if (query?.limit) {
+    limit = Number(query.limit);
+  }
+
+  //if page given and set
+  if (query?.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+
+  // Execute the query with limiting and paging
+  const paginateQuery = sortQuery.skip(skip);
+  const limitQuery = paginateQuery.limit(limit);
+
+  // limiting page
+  let fields = '-__v';
+  if (query?.fields) {
+    fields = (query.fields as string).split(',').join(' ');
+  }
+
+  const fieldQuery = await limitQuery.select(fields);
+
+  return fieldQuery;
 };
 
 const getSingleStudentsFromDB = async (id: string) => {
@@ -30,37 +96,35 @@ const getSingleStudentsFromDB = async (id: string) => {
 };
 
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
-  
-  const {name, guardian, localGuardian, ...remainingSTudentData} = payload;
+  const { name, guardian, localGuardian, ...remainingSTudentData } = payload;
 
-  const modifiedUpdateData : Record<string, unknown> ={
-    ...remainingSTudentData
-  }
+  const modifiedUpdateData: Record<string, unknown> = {
+    ...remainingSTudentData,
+  };
 
-  if(name && Object.keys(name).length ){
-    for(const [key, value] of Object.entries(name)){
-      modifiedUpdateData[`name.${key}`] = value
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedUpdateData[`name.${key}`] = value;
     }
   }
 
-  if(guardian && Object.keys(guardian)){
-    for(const [key, value] of Object.entries(guardian)){
-      modifiedUpdateData[`guardian.${key}`] = value
+  if (guardian && Object.keys(guardian)) {
+    for (const [key, value] of Object.entries(guardian)) {
+      modifiedUpdateData[`guardian.${key}`] = value;
     }
   }
 
-  if(localGuardian && Object.keys(localGuardian)){
-    for(const [key, value] of Object.entries(localGuardian)){
-      modifiedUpdateData[`localGuardian.${key}`] = value
+  if (localGuardian && Object.keys(localGuardian)) {
+    for (const [key, value] of Object.entries(localGuardian)) {
+      modifiedUpdateData[`localGuardian.${key}`] = value;
     }
   }
 
-  const result = await Student.findOneAndUpdate(
-    { id },
-    modifiedUpdateData,
-    {new: true, runValidators:true}
-  )
-    
+  const result = await Student.findOneAndUpdate({ id }, modifiedUpdateData, {
+    new: true,
+    runValidators: true,
+  });
+
   return result;
 };
 
