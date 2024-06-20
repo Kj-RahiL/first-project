@@ -18,7 +18,7 @@ export type TBloodGroup =
   | 'O+'
   | 'O-';
 
-export type TFaculty = {
+export type TAdmin = {
   id: string;
   user: Types.ObjectId;
   designation: string;
@@ -31,14 +31,14 @@ export type TFaculty = {
   bloodGroup?: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
-  academicDepartment: Types.ObjectId;
+  managementDepartment: Types.ObjectId;
   profileImg?: string;
   isDeleted: boolean;
 };
 // for creating static
 
-export interface FacultyModel extends Model<TFaculty> {
-  isUserExists(id: string): Promise<TFaculty | null>;
+export interface AdminModel extends Model<TAdmin> {
+  isUserExists(id: string): Promise<TAdmin | null>;
 }
 
 // for creating instance

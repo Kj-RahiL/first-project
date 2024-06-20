@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { Student } from './student.model';
 import AppError from '../../errors/appError';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
 import { studentSearchableFields } from './student.constant';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { Student } from './student.model';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
