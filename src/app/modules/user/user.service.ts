@@ -74,7 +74,7 @@ const createFacultyIntoDB = async (password: string, payload: TStudent) => {
   userData.password = password || (config.default_password as string);
 
   // set student role
-  userData.role = 'student';
+  userData.role = 'faculty';
 
   // find academic semester info
   const academicDepartment = await AcademicDepartment.findById(

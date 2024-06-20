@@ -29,14 +29,14 @@ const getSingleFaculty: RequestHandler = catchAsync(async (req, res) => {
 
 const updateFaculty = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { student } = req.body;
+  const { faculty } = req.body;
 
-  const result = await facultyServices.updateFacultyIntoDB(id, student);
+  const result = await facultyServices.updateFacultyIntoDB(id, faculty);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Student is updated successfully',
+    message: 'Faculty is updated successfully',
     data: result,
   });
 });

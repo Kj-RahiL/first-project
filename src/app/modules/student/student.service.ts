@@ -48,7 +48,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
     ...remainingSTudentData,
   };
 
-  if (name && Object.keys(name).length) {
+  if (name && Object?.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {
       modifiedUpdateData[`name.${key}`] = value;
     }

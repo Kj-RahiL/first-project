@@ -46,7 +46,9 @@ const findLastFacultyId = async () => {
     })
     .lean();
 
-  return lastFaculty?.id ? lastFaculty.id.substring(6) : undefined;
+    // console.log('last ', lastFaculty?.id.substring(2))
+
+  return lastFaculty?.id ? lastFaculty.id.substring(2) : undefined;
 };
 
 export const generateFacultyId = async () => {
@@ -54,6 +56,7 @@ export const generateFacultyId = async () => {
   let currentId = (0).toString();
 
   const lastFacultyId = await findLastFacultyId();
+
   if (lastFacultyId) {
     currentId = lastFacultyId;
   }
