@@ -28,4 +28,4 @@ router.patch(
 
 router.get('/', SemesterRegistrationController.getAllSemesterRegistrations);
 
-export const CourseRoutes = router;
+export const SemesterRegistrationRoutes = router;
